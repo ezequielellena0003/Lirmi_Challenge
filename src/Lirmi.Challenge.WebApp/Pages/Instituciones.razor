@@ -1,0 +1,51 @@
+﻿@page "/Instituciones"
+@using System.Net.Http.Json
+@inject HttpClient httpClient
+@using Lirmi.Challenge.Shared
+
+
+<PageTitle>Instituciones</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Instituciones</MudText>
+
+@if (instituciones == null)
+{
+    <MudText Typo="Typo.h5" GutterBottom="true">Cargando...</MudText>
+}else if (instituciones.Count() == 0)
+{
+    <MudText Typo="Typo.h5" GutterBottom="true">No hay Instituciones en la base de datos</MudText>
+}else
+{
+    <MudTable Items="@instituciones.Take(10)" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Colegio</MudTh>
+        <MudTh>Curso</MudTh>
+        <MudTh>Asignatura</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Colegio">@context.NombreColegio</MudTd>
+        <MudTd DataLabel="Curso">@context.NombreCurso</MudTd>
+        <MudTd DataLabel="Asignatura">@context.NombreAsignatura</MudTd>
+    </RowTemplate>
+</MudTable>
+    
+}
+
+
+
+@code
+{
+    InstitucionDto[] instituciones { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarInstituciones();
+    }
+
+    async Task CargarInstituciones()
+    {
+        instituciones = await httpClient.GetFromJsonAsync<InstitucionDto[]>("/Institucion");
+    }
+}
+
+
